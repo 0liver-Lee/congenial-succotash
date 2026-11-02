@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            string temp;
+            string temp, equation, chunk = "";
+            bool check;
 
             temp = Console.ReadLine();
 
@@ -61,8 +62,58 @@
                 case "bruteAffine":
                     break;
                 default:
+                    equation = temp.Replace(" ", "");
+                    check = false;
+                    do
+                    {
+                        if (equation.IndexOf("(") != -1)
+                        {
+                            chunk = equation.Substring(equation.IndexOf("(") + 1, equation.IndexOf(")") - 1 - equation.IndexOf("("));
+                            chunk = BEDMAS(chunk);
+                        }
+                        else
+                        {
+                            BEDMAS(equation);
+                        }
+                    } while (!check);
+                    check = false;
                     break;
             }
+        }
+        static string BEDMAS(string equation)
+        {
+            bool check = false;
+            string chunk;
+            int i, j, x, _ = 0, result = 0;
+
+            do
+            {
+                if (equation.IndexOf("!") != -1)
+                {
+                    i = equation.IndexOf("!");
+                    do
+                    {
+                        i--;
+                        if (i < 0)
+                        {
+                            break;
+                        }
+                    } while (int.TryParse(equation[i].ToString(), out _));
+                    chunk = equation.Substring(i + 1, equation.IndexOf("!") - 1 - i);
+                    x = int.Parse(chunk);
+                    for (j = x - 1, result = x; j > 0; j--)
+                    {
+                        result *= j;
+                    }
+                    Console.WriteLine(result);
+                    Console.ReadLine();
+                }
+                else
+                {
+                    check = true;
+                }
+            } while (!check);
+            return equation;
         }
     }
 }
