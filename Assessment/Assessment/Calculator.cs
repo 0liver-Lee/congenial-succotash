@@ -4,8 +4,9 @@
     {
         static void Main(string[] args)
         {
-            string temp, equation, chunk = "";
+            string temp, equation, chunk = "", result;
             bool check;
+            int i, b;
 
             temp = Console.ReadLine();
 
@@ -66,14 +67,25 @@
                     check = false;
                     do
                     {
-                        if (equation.IndexOf("(") != -1)
+                        b = -1;
+                        for (i = 0; i < equation.Length; i++)
                         {
-                            chunk = equation.Substring(equation.IndexOf("(") + 1, equation.IndexOf(")") - 1 - equation.IndexOf("("));
-                            chunk = BEDMAS(chunk);
+                            if (equation[i] == '(')
+                            {
+                                b = i;
+                            }
+                        }
+                        if (b != -1)
+                        {
+                            chunk = equation.Substring(b + 1, equation.IndexOf(")") - 1 - b);
+                            result = BEDMAS(chunk);
+                            equation = equation.Replace($"({chunk})", result);
                         }
                         else
                         {
-                            BEDMAS(equation);
+                            result = BEDMAS(equation);
+                            Console.WriteLine(result);
+                            check = true;
                         }
                     } while (!check);
                     check = false;
@@ -83,8 +95,9 @@
         static string BEDMAS(string equation)
         {
             bool check = false;
-            string chunk;
-            int i, j, x, _ = 0, result = 0;
+            string chunkx, chunky;
+            int i, _ = 0, d, m, a, s;
+            double result = 0, x, y, j;
 
             do
             {
@@ -98,19 +111,377 @@
                         {
                             break;
                         }
+                        if (equation[i] == '.')
+                        {
+                            i--;
+                        }
                     } while (int.TryParse(equation[i].ToString(), out _));
-                    chunk = equation.Substring(i + 1, equation.IndexOf("!") - 1 - i);
-                    x = int.Parse(chunk);
-                    for (j = x - 1, result = x; j > 0; j--)
+                    chunkx = equation.Substring(i + 1, equation.IndexOf("!") - 1 - i);
+                    x = double.Parse(chunkx);
+                    for (j = x - 1, result = x; j > 1; j--)
                     {
                         result *= j;
                     }
-                    Console.WriteLine(result);
-                    Console.ReadLine();
+                    equation = equation.Replace($"{chunkx}!", result.ToString());
                 }
                 else
                 {
                     check = true;
+                }
+            } while (!check);
+            check = false;
+            do
+            {
+                if (equation.IndexOf("^") != -1)
+                {
+                    i = equation.IndexOf("^");
+                    do
+                    {
+                        i--;
+                        if (i < 0)
+                        {
+                            break;
+                        }
+                        if (equation[i] == '.')
+                        {
+                            i--;
+                        }
+                    } while (int.TryParse(equation[i].ToString(), out _));
+                    chunkx = equation.Substring(i + 1, equation.IndexOf("^") - 1 - i);
+                    x = double.Parse(chunkx);
+                    i = equation.IndexOf("^");
+                    do
+                    {
+                        i++;
+                        if (i > equation.Length - 1)
+                        {
+                            break;
+                        }
+                        if (equation[i] == '.')
+                        {
+                            i++;
+                        }
+                    } while (int.TryParse(equation[i].ToString(), out _));
+                    chunky = equation.Substring(equation.IndexOf("^") + 1, i - 1 - equation.IndexOf("^"));
+                    y = double.Parse(chunky);
+                    result = Math.Pow(x, y);
+                    equation = equation.Replace($"{chunkx}^{chunky}", result.ToString());
+                }
+                else
+                {
+                    check = true;
+                }
+            } while (!check);
+            check = false;
+            do
+            {
+                d = equation.IndexOf("/");
+                m = equation.IndexOf("*");
+                if (d == m)
+                {
+                    break;
+                }
+                if (m == -1)
+                {
+                    i = equation.IndexOf("/");
+                    do
+                    {
+                        i--;
+                        if (i < 0)
+                        {
+                            break;
+                        }
+                        if (equation[i] == '.')
+                        {
+                            i--;
+                        }
+                    } while (int.TryParse(equation[i].ToString(), out _));
+                    chunkx = equation.Substring(i + 1, equation.IndexOf("/") - 1 - i);
+                    x = double.Parse(chunkx);
+                    i = equation.IndexOf("/");
+                    do
+                    {
+                        i++;
+                        if (i > equation.Length - 1)
+                        {
+                            break;
+                        }
+                        if (equation[i] == '.')
+                        {
+                            i++;
+                        }
+                    } while (int.TryParse(equation[i].ToString(), out _));
+                    chunky = equation.Substring(equation.IndexOf("/") + 1, i - 1 - equation.IndexOf("/"));
+                    y = double.Parse(chunky);
+                    result = x / y;
+                    equation = equation.Replace($"{chunkx}/{chunky}", result.ToString());
+                }
+                else
+                {
+                    if (d == -1)
+                    {
+                        i = equation.IndexOf("*");
+                        do
+                        {
+                            i--;
+                            if (i < 0)
+                            {
+                                break;
+                            }
+                            if (equation[i] == '.')
+                            {
+                                i--;
+                            }
+                        } while (int.TryParse(equation[i].ToString(), out _));
+                        chunkx = equation.Substring(i + 1, equation.IndexOf("*") - 1 - i);
+                        x = double.Parse(chunkx);
+                        i = equation.IndexOf("*");
+                        do
+                        {
+                            i++;
+                            if (i > equation.Length - 1)
+                            {
+                                break;
+                            }
+                            if (equation[i] == '.')
+                            {
+                                i++;
+                            }
+                        } while (int.TryParse(equation[i].ToString(), out _));
+                        chunky = equation.Substring(equation.IndexOf("*") + 1, i - 1 - equation.IndexOf("*"));
+                        y = double.Parse(chunky);
+                        result = x * y;
+                        equation = equation.Replace($"{chunkx}*{chunky}", result.ToString());
+                    }
+                    else
+                    {
+                        if (d < m)
+                        {
+                            i = equation.IndexOf("/");
+                            do
+                            {
+                                i--;
+                                if (i < 0)
+                                {
+                                    break;
+                                }
+                                if (equation[i] == '.')
+                                {
+                                    i--;
+                                }
+                            } while (int.TryParse(equation[i].ToString(), out _));
+                            chunkx = equation.Substring(i + 1, equation.IndexOf("/") - 1 - i);
+                            x = double.Parse(chunkx);
+                            i = equation.IndexOf("/");
+                            do
+                            {
+                                i++;
+                                if (i > equation.Length - 1)
+                                {
+                                    break;
+                                }
+                                if (equation[i] == '.')
+                                {
+                                    i++;
+                                }
+                            } while (int.TryParse(equation[i].ToString(), out _));
+                            chunky = equation.Substring(equation.IndexOf("/") + 1, i - 1 - equation.IndexOf("/"));
+                            y = double.Parse(chunky);
+                            result = x / y;
+                            equation = equation.Replace($"{chunkx}/{chunky}", result.ToString());
+                        }
+                        else
+                        {
+                            i = equation.IndexOf("*");
+                            do
+                            {
+                                i--;
+                                if (i < 0)
+                                {
+                                    break;
+                                }
+                                if (equation[i] == '.')
+                                {
+                                    i--;
+                                }
+                            } while (int.TryParse(equation[i].ToString(), out _));
+                            chunkx = equation.Substring(i + 1, equation.IndexOf("*") - 1 - i);
+                            x = double.Parse(chunkx);
+                            i = equation.IndexOf("*");
+                            do
+                            {
+                                i++;
+                                if (i > equation.Length - 1)
+                                {
+                                    break;
+                                }
+                                if (equation[i] == '.')
+                                {
+                                    i++;
+                                }
+                            } while (int.TryParse(equation[i].ToString(), out _));
+                            chunky = equation.Substring(equation.IndexOf("*") + 1, i - 1 - equation.IndexOf("*"));
+                            y = double.Parse(chunky);
+                            result = x * y;
+                            equation = equation.Replace($"{chunkx}*{chunky}", result.ToString());
+                        }
+                    }
+                }
+            } while (!check);
+            check = false;
+            do
+            {
+                a = equation.IndexOf("+");
+                s = equation.IndexOf("-");
+                if (a == s)
+                {
+                    break;
+                }
+                if (s == -1)
+                {
+                    i = equation.IndexOf("+");
+                    do
+                    {
+                        i--;
+                        if (i < 0)
+                        {
+                            break;
+                        }
+                        if (equation[i] == '.')
+                        {
+                            i--;
+                        }
+                    } while (int.TryParse(equation[i].ToString(), out _));
+                    chunkx = equation.Substring(i + 1, equation.IndexOf("+") - 1 - i);
+                    x = double.Parse(chunkx);
+                    i = equation.IndexOf("+");
+                    do
+                    {
+                        i++;
+                        if (i > equation.Length - 1)
+                        {
+                            break;
+                        }
+                        if (equation[i] == '.')
+                        {
+                            i++;
+                        }
+                    } while (int.TryParse(equation[i].ToString(), out _));
+                    chunky = equation.Substring(equation.IndexOf("+") + 1, i - 1 - equation.IndexOf("+"));
+                    y = double.Parse(chunky);
+                    result = x + y;
+                    equation = equation.Replace($"{chunkx}+{chunky}", result.ToString());
+                }
+                else
+                {
+                    if (a == -1)
+                    {
+                        i = equation.IndexOf("-");
+                        do
+                        {
+                            i--;
+                            if (i < 0)
+                            {
+                                break;
+                            }
+                            if (equation[i] == '.')
+                            {
+                                i--;
+                            }
+                        } while (int.TryParse(equation[i].ToString(), out _));
+                        chunkx = equation.Substring(i + 1, equation.IndexOf("-") - 1 - i);
+                        x = double.Parse(chunkx);
+                        i = equation.IndexOf("-");
+                        do
+                        {
+                            i++;
+                            if (i > equation.Length - 1)
+                            {
+                                break;
+                            }
+                            if (equation[i] == '.')
+                            {
+                                i++;
+                            }
+                        } while (int.TryParse(equation[i].ToString(), out _));
+                        chunky = equation.Substring(equation.IndexOf("-") + 1, i - 1 - equation.IndexOf("-"));
+                        y = double.Parse(chunky);
+                        result = x - y;
+                        equation = equation.Replace($"{chunkx}-{chunky}", result.ToString());
+                    }
+                    else
+                    {
+                        if (a < s)
+                        {
+                            i = equation.IndexOf("+");
+                            do
+                            {
+                                i--;
+                                if (i < 0)
+                                {
+                                    break;
+                                }
+                                if (equation[i] == '.')
+                                {
+                                    i--;
+                                }
+                            } while (int.TryParse(equation[i].ToString(), out _));
+                            chunkx = equation.Substring(i + 1, equation.IndexOf("+") - 1 - i);
+                            x = double.Parse(chunkx);
+                            i = equation.IndexOf("+");
+                            do
+                            {
+                                i++;
+                                if (i > equation.Length - 1)
+                                {
+                                    break;
+                                }
+                                if (equation[i] == '.')
+                                {
+                                    i++;
+                                }
+                            } while (int.TryParse(equation[i].ToString(), out _));
+                            chunky = equation.Substring(equation.IndexOf("+") + 1, i - 1 - equation.IndexOf("+"));
+                            y = double.Parse(chunky);
+                            result = x + y;
+                            equation = equation.Replace($"{chunkx}+{chunky}", result.ToString());
+                        }
+                        else
+                        {
+                            i = equation.IndexOf("-");
+                            do
+                            {
+                                i--;
+                                if (i < 0)
+                                {
+                                    break;
+                                }
+                                if (equation[i] == '.')
+                                {
+                                    i--;
+                                }
+                            } while (int.TryParse(equation[i].ToString(), out _));
+                            chunkx = equation.Substring(i + 1, equation.IndexOf("-") - 1 - i);
+                            x = double.Parse(chunkx);
+                            i = equation.IndexOf("-");
+                            do
+                            {
+                                i++;
+                                if (i > equation.Length - 1)
+                                {
+                                    break;
+                                }
+                                if (equation[i] == '.')
+                                {
+                                    i++;
+                                }
+                            } while (int.TryParse(equation[i].ToString(), out _));
+                            chunky = equation.Substring(equation.IndexOf("-") + 1, i - 1 - equation.IndexOf("-"));
+                            y = double.Parse(chunky);
+                            result = x - y;
+                            equation = equation.Replace($"{chunkx}-{chunky}", result.ToString());
+                        }
+                    }
                 }
             } while (!check);
             return equation;
