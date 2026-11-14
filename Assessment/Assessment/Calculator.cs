@@ -8,16 +8,32 @@
         public double x2;
         public double y2;
     }
+    public struct Vec
+    {
+        public string name;
+        public double x;
+        public double y;
+    }
+    public struct Mat
+    {
+        public string name;
+        public double a;
+        public double b;
+        public double c;
+        public double d;
+    }
     internal class Calculator
     {
         public static bool E = false;
-        static void Main(string[] args)
+        static void Main()
         {
             string temp, equation, chunk = "", result;
             string[] chunks;
-            bool check, dupe = false, found = false;
-            int i, b;
+            bool check, dupe = false, found = false, foundy = false;
+            int i, x = -1, y = -1;
             Line[] lines = [];
+            Vec[] vectors = [];
+            Mat[] matrices = [];
 
             while (true)
             {
@@ -110,28 +126,230 @@
                             Console.WriteLine(Convert.ToDouble(equation) * Math.PI / 180);
                             break;
                         case "vec":
+                            equation = temp.Replace("vec ", "");
+                            Vec v = new Vec();
+                            equation = equation.Replace(" ", ",");
+                            equation = equation.Replace("(", "");
+                            equation = equation.Replace(")", "");
+                            chunks = equation.Split(",");
+                            v.name = chunks[0];
+                            for (i = 0; i < vectors.Length; i++)
+                            {
+                                if (v.name == vectors[i].name)
+                                {
+                                    Console.WriteLine($"Vector {v.name} already exists");
+                                    dupe = true;
+                                }
+                            }
+                            if (!dupe)
+                            {
+                                v.x = Convert.ToDouble(chunks[1]);
+                                v.y = Convert.ToDouble(chunks[2]);
+                                vectors = [.. vectors, v];
+                                Console.WriteLine($"Vector {v.name} successfully created");
+                            }
+                            dupe = false;
                             break;
                         case "addVec":
+                            equation = temp.Replace("addVec ", "");
+                            chunks = equation.Split(' ');
+                            for (i = 0; i < vectors.Length; i++)
+                            {
+                                if (chunks[0] == vectors[i].name)
+                                {
+                                    found = true;
+                                    x = i;
+                                }
+                                else
+                                {
+                                    if (chunks[1] == vectors[i].name)
+                                    {
+                                        foundy = true;
+                                        y = i;
+                                    }
+                                }
+                            }
+                            if (!found || !foundy)
+                            {
+                                Console.WriteLine($"Vectors {equation}not found");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{vectors[x].x + vectors[y].x} {vectors[x].y + vectors[y].y}");
+                            }
+                                found = false;
+                            foundy = false;
                             break;
                         case "subVec":
+                            equation = temp.Replace("subVec ", "");
+                            chunks = equation.Split(' ');
+                            for (i = 0; i < vectors.Length; i++)
+                            {
+                                if (chunks[0] == vectors[i].name)
+                                {
+                                    found = true;
+                                    x = i;
+                                }
+                                else
+                                {
+                                    if (chunks[1] == vectors[i].name)
+                                    {
+                                        foundy = true;
+                                        y = i;
+                                    }
+                                }
+                            }
+                            if (!found || !foundy)
+                            {
+                                Console.WriteLine($"Vectors {equation}not found");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{vectors[x].x - vectors[y].x} {vectors[x].y - vectors[y].y}");
+                            }
+                            found = false;
+                            foundy = false;
                             break;
                         case "dotVec":
                             break;
                         case "scalVec":
                             break;
                         case "mat":
+                            equation = temp.Replace("mat ", "");
+                            Mat m = new Mat();
+                            equation = equation.Replace(" ", ",");
+                            equation = equation.Replace("(", "");
+                            equation = equation.Replace(")", "");
+                            chunks = equation.Split(",");
+                            m.name = chunks[0];
+                            for (i = 0; i < matrices.Length; i++)
+                            {
+                                if (m.name == matrices[i].name)
+                                {
+                                    Console.WriteLine($"Matrix {m.name} already exists");
+                                    dupe = true;
+                                }
+                            }
+                            if (!dupe)
+                            {
+                                m.a = Convert.ToDouble(chunks[1]);
+                                m.b = Convert.ToDouble(chunks[2]);
+                                m.c = Convert.ToDouble(chunks[3]);
+                                m.d = Convert.ToDouble(chunks[4]);
+                                matrices = [.. matrices, m];
+                                Console.WriteLine($"Matrix {m.name} successfully created");
+                            }
+                            dupe = false;
                             break;
                         case "addMat":
+                            equation = temp.Replace("addMat ", "");
+                            chunks = equation.Split(' ');
+                            for (i = 0; i < matrices.Length; i++)
+                            {
+                                if (chunks[0] == matrices[i].name)
+                                {
+                                    found = true;
+                                    x = i;
+                                }
+                                else
+                                {
+                                    if (chunks[1] == matrices[i].name)
+                                    {
+                                        foundy = true;
+                                        y = i;
+                                    }
+                                }
+                            }
+                            if (!found || !foundy)
+                            {
+                                Console.WriteLine($"Matrices {equation}not found");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{matrices[x].a + matrices[y].a} {matrices[x].b + matrices[y].b}\n{matrices[x].c + matrices[y].c} {matrices[x].d + matrices[y].d}");
+                            }
+                            found = false;
+                            foundy = false;
                             break;
                         case "dotMat":
                             break;
                         case "scalMat":
                             break;
                         case "detMat":
+                            equation = temp.Replace("detMat ", "");
+                            for (i = 0; i < matrices.Length; i++)
+                            {
+                                if (equation == matrices[i].name + " ")
+                                {
+                                    found = true;
+                                    Console.WriteLine(matrices[i].a * matrices[i].d - matrices[i].b * matrices[i].c);
+                                }
+                            }
+                            if (!found)
+                            {
+                                Console.WriteLine($"Line {equation}not found");
+                            }
+                            found = false;
                             break;
                         case "invMat":
+                            equation = temp.Replace("invMat ", "");
+                            double det = 0, tempd, a, b, c, d;
+                            for (i = 0; i < matrices.Length; i++)
+                            {
+                                if (equation == matrices[i].name + " ")
+                                {
+                                    found = true;
+                                    det = matrices[i].a * matrices[i].d - matrices[i].b * matrices[i].c;
+                                    a = matrices[i].a;
+                                    b = matrices[i].b;
+                                    c = matrices[i].c;
+                                    d = matrices[i].d;
+                                    tempd = a;
+                                    a = d;
+                                    d = tempd;
+                                    b *= -1;
+                                    c *= -1;
+                                    Console.WriteLine($"{1 / det * a} {1 / det * b}\n{1 / det * c} {1 / det * d}");
+                                }
+                            }
+                            if (!found)
+                            {
+                                Console.WriteLine($"Line {equation}not found");
+                            }
+                            found = false;
                             break;
                         case "numPrime":
+                            equation = temp.Replace("numPrime ", "");
+                            switch (Convert.ToInt32(equation))
+                            {
+                                case >= 10000 or <= 0:
+                                    Console.WriteLine("Math Error");
+                                    break;
+                                case 1:
+                                    Console.WriteLine("False");
+                                    break;
+                                case 2:
+                                    Console.WriteLine("True");
+                                    break;
+                                default:
+                                    found = false;
+                                    for (i = 2; i < Math.Sqrt(Convert.ToInt32(equation)); i++)
+                                    {
+                                        if (Convert.ToDouble(equation) / i == Convert.ToInt32(Convert.ToDouble(equation) / i))
+                                        {
+                                            found = true;
+                                        }
+                                    }
+                                    if (found)
+                                    {
+                                        Console.WriteLine("False");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("True");
+                                    }
+                                        break;
+                            }
                             break;
                         case "numCheckDigit":
                             break;
@@ -152,7 +370,7 @@
                             check = false;
                             do
                             {
-                                b = -1;
+                                int z = -1;
                                 for (i = 0; i < equation.Length; i++)
                                 {
                                     if (equation[i] == '(')
@@ -176,9 +394,9 @@
                                         equation = "++";
                                     }
                                 }
-                                if (b != -1)
+                                if (z != -1)
                                 {
-                                    chunk = equation.Substring(b + 1, equation.IndexOf(")") - 1 - b);
+                                    chunk = equation.Substring(z + 1, equation.IndexOf(")") - 1 - z);
                                     try
                                     {
                                         result = BEDMAS(chunk);
@@ -215,6 +433,7 @@
                                         if (E)
                                         {
                                             Console.WriteLine("Math Error");
+                                            E = false;
                                         }
                                         else
                                         {
@@ -484,25 +703,6 @@
                 }
                 a = equation.IndexOf("+");
                 s = equation.IndexOf("-");
-                do
-                {
-                    if (equation.IndexOf("-") != -1)
-                    {
-                        if (equation[equation.IndexOf("-") - 1] == 'E')
-                        {
-                            equation = equation.Replace("E-", "@");
-                        }
-                        else
-                        {
-                            s = equation.IndexOf('-');
-                            check = true;
-                        }
-                    }
-                    else
-                    {
-                        check = true;
-                    }
-                } while (!check);
                 if (a == s)
                 {
                     break;
