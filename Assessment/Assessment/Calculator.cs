@@ -456,20 +456,6 @@
                                         break;
                             }
                             break;
-                        case "numCheckDigit":
-                            break;
-                        case "numRand":
-                            break;
-                        case "caesarEn":
-                            break;
-                        case "caesarDe":
-                            break;
-                        case "affineEn":
-                            break;
-                        case "affineDe":
-                            break;
-                        case "bruteAffine":
-                            break;
                         default:
                             equation = temp.Replace(" ", "");
                             check = false;
