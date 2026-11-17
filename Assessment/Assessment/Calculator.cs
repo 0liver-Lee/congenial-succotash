@@ -31,6 +31,7 @@
             string[] chunks;
             bool check, dupe = false, found = false, foundy = false;
             int i, x = -1, y = -1;
+            double scal, dot;
             Line[] lines = [];
             Vec[] vectors = [];
             Mat[] matrices = [];
@@ -211,8 +212,66 @@
                             foundy = false;
                             break;
                         case "dotVec":
+                            equation = temp.Replace("dotVec ", "");
+                            chunks = equation.Split(' ');
+                            for (i = 0; i < vectors.Length; i++)
+                            {
+                                if (chunks[0] == vectors[i].name)
+                                {
+                                    found = true;
+                                    x = i;
+                                }
+                                else
+                                {
+                                    if (chunks[1] == vectors[i].name)
+                                    {
+                                        foundy = true;
+                                        y = i;
+                                    }
+                                }
+                            }
+                            if (!found || !foundy)
+                            {
+                                Console.WriteLine($"Vectors {equation}not found");
+                            }
+                            else
+                            {
+                                dot = vectors[x].x * vectors[y].x + vectors[x].y * vectors[y].y;
+                                Console.WriteLine(dot);
+                                switch (dot)
+                                {
+                                    case 0:
+                                        Console.WriteLine("Perpendicular");
+                                        break;
+                                    case > 0:
+                                        Console.WriteLine("Same direction");
+                                        break;
+                                    case < 0:
+                                        Console.WriteLine("Opposite direction");
+                                        break;
+                                }
+                            }
+                            found = false;
+                            foundy = false;
                             break;
                         case "scalVec":
+                            equation = temp.Replace("scalVec ", "");
+                            equation = equation.Replace(" ", ",");
+                            chunks = equation.Split(",");
+                            scal = Convert.ToDouble(chunks[0]);
+                            for (i = 0; i < vectors.Length; i++)
+                            {
+                                if (chunks[1] == vectors[i].name)
+                                {
+                                    found = true;
+                                    Console.WriteLine($"{scal * vectors[i].x} {scal * vectors[i].y}");
+                                }
+                            }
+                            if (!found)
+                            {
+                                Console.WriteLine($"Vector {equation}not found");
+                            }
+                            found = false;
                             break;
                         case "mat":
                             equation = temp.Replace("mat ", "");
@@ -272,8 +331,54 @@
                             foundy = false;
                             break;
                         case "dotMat":
+                            equation = temp.Replace("dotMat ", "");
+                            chunks = equation.Split(' ');
+                            for (i = 0; i < matrices.Length; i++)
+                            {
+                                if (chunks[0] == matrices[i].name)
+                                {
+                                    found = true;
+                                    x = i;
+                                }
+                                else
+                                {
+                                    if (chunks[1] == matrices[i].name)
+                                    {
+                                        foundy = true;
+                                        y = i;
+                                    }
+                                }
+                            }
+                            if (!found || !foundy)
+                            {
+                                Console.WriteLine($"Matrices {equation}not found");
+                            }
+                            else
+                            {
+                                dot = matrices[x].a * matrices[y].a + matrices[x].b * matrices[y].b + matrices[x].c * matrices[y].c + matrices[x].d * matrices[y].d;
+                                Console.WriteLine(dot);
+                            }
+                            found = false;
+                            foundy = false;
                             break;
                         case "scalMat":
+                            equation = temp.Replace("scalMat ", "");
+                            equation = equation.Replace(" ", ",");
+                            chunks = equation.Split(",");
+                            scal = Convert.ToDouble(chunks[0]);
+                            for (i = 0; i < matrices.Length; i++)
+                            {
+                                if (chunks[1] == matrices[i].name)
+                                {
+                                    found = true;
+                                    Console.WriteLine($"{scal * matrices[i].a} {scal * matrices[i].b}\n{scal * matrices[i].c} {scal * matrices[i].d}");
+                                }
+                            }
+                            if (!found)
+                            {
+                                Console.WriteLine($"Matrix {equation}not found");
+                            }
+                            found = false;
                             break;
                         case "detMat":
                             equation = temp.Replace("detMat ", "");
