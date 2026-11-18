@@ -22,10 +22,10 @@
         public double c;
         public double d;
     }
-    internal class Calculator
+    public class Calculator
     {
         public static bool E = false;
-        static void Main()
+        public static void Main()
         {
             string temp, equation, chunk = "", result;
             string[] chunks;
@@ -544,7 +544,7 @@
                 }
             }
         }
-        static string BEDMAS(string equation)
+        public static string BEDMAS(string equation)
         {
             bool check = false;
             string chunkx, chunky;
